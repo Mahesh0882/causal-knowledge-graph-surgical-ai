@@ -1,0 +1,18 @@
+# Python template
+__pycache__/
+*.py[cod]
+*$py.class
+
+# User specific data ignores
+data/*
+!data/CholecT45/
+data/CholecT45/*
+!data/CholecT45/triplet/
+!data/CholecT45/dict/
+
+# Outputs
+outputs/graphs/*
+outputs/parsed_triplets/*
+
+# Jupyter Notebook
+.ipynb_checkpoints
