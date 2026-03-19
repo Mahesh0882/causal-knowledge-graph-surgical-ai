@@ -15,4 +15,9 @@ outputs/graphs/*
 outputs/parsed_triplets/*
 
 # Jupyter Notebook
-.ipynb_checkpoints
+.ipynb_checkpoints/
+
+# Environment and OS files
+venv/
+*.png
+.DS_Store
