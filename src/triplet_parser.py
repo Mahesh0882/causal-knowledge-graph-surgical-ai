@@ -110,6 +110,9 @@ def decode_annotation_entry(entry: list, categories: dict) -> dict:
     # Flag invalid / null annotations (ID == -1)
     is_valid = triplet_id >= 0
 
+    # Flag null_verb / null_target entries
+    is_null = (verb_id == 9) or (target_id == 14)  # null_verb=9, null_target=14
+
     return {
         'triplet_id': triplet_id,
         'triplet_label': triplet_label,
@@ -120,6 +123,7 @@ def decode_annotation_entry(entry: list, categories: dict) -> dict:
         'target_id': target_id,
         'target': target,
         'is_valid': is_valid,
+        'is_null': is_null,
     }
 
 
@@ -156,26 +160,29 @@ def parse_video(json_path: str | Path) -> pd.DataFrame:
 
     rows = []
     for frame_id, entries in annotations.items():
-        for entry in entries:
+        for entry_idx, entry in enumerate(entries):
             decoded = decode_annotation_entry(entry, categories)
             decoded['frame'] = int(frame_id)
             decoded['video'] = video_name
             decoded['num_triplets_in_frame'] = len(entries)
+            decoded['entry_index'] = entry_idx  # preserve raw order
             rows.append(decoded)
 
     df = pd.DataFrame(rows)
-    df = df.sort_values('frame').reset_index(drop=True)
+    # Stable sort: preserves annotation order within each frame
+    df = df.sort_values(['frame', 'entry_index']).reset_index(drop=True)
 
     # Mark multi-label frames
     df['is_multi_label'] = df['num_triplets_in_frame'] > 1
 
     col_order = [
-        'video', 'frame', 'num_triplets_in_frame', 'is_multi_label',
+        'video', 'frame', 'entry_index',
+        'num_triplets_in_frame', 'is_multi_label',
         'triplet_id', 'triplet_label',
         'instrument_id', 'instrument',
         'verb_id', 'verb',
         'target_id', 'target',
-        'is_valid',
+        'is_valid', 'is_null',
     ]
     return df[col_order]
 
