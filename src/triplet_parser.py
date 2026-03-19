@@ -107,6 +107,9 @@ def decode_annotation_entry(entry: list, categories: dict) -> dict:
         str(triplet_id), f'unknown_{triplet_id}'
     )
 
+    # Flag invalid / null annotations (ID == -1)
+    is_valid = triplet_id >= 0
+
     return {
         'triplet_id': triplet_id,
         'triplet_label': triplet_label,
@@ -116,6 +119,7 @@ def decode_annotation_entry(entry: list, categories: dict) -> dict:
         'verb': verb,
         'target_id': target_id,
         'target': target,
+        'is_valid': is_valid,
     }
 
 
@@ -162,12 +166,16 @@ def parse_video(json_path: str | Path) -> pd.DataFrame:
     df = pd.DataFrame(rows)
     df = df.sort_values('frame').reset_index(drop=True)
 
+    # Mark multi-label frames
+    df['is_multi_label'] = df['num_triplets_in_frame'] > 1
+
     col_order = [
-        'video', 'frame', 'num_triplets_in_frame',
+        'video', 'frame', 'num_triplets_in_frame', 'is_multi_label',
         'triplet_id', 'triplet_label',
         'instrument_id', 'instrument',
         'verb_id', 'verb',
         'target_id', 'target',
+        'is_valid',
     ]
     return df[col_order]
 
@@ -247,6 +255,105 @@ def video_summary(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
+# Multi-Label Frame Utilities
+# ---------------------------------------------------------------------------
+
+def filter_valid_triplets(df: pd.DataFrame) -> pd.DataFrame:
+    """Remove rows where triplet_id == -1 (no annotation / null).
+
+    After filtering, ``num_triplets_in_frame`` and ``is_multi_label``
+    are recalculated to reflect only valid entries.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Output of parse_video() or parse_multiple_videos().
+
+    Returns
+    -------
+    pd.DataFrame
+        Filtered DataFrame with only valid triplets.
+    """
+    df = df[df['is_valid']].copy()
+    # Recalculate per-frame counts after filtering
+    frame_counts = df.groupby(['video', 'frame']).size().rename('num_triplets_in_frame')
+    df = df.drop(columns=['num_triplets_in_frame']).merge(
+        frame_counts, on=['video', 'frame'], how='left'
+    )
+    df['is_multi_label'] = df['num_triplets_in_frame'] > 1
+    return df.reset_index(drop=True)
+
+
+def multi_label_analysis(df: pd.DataFrame) -> dict:
+    """Detailed analysis of multi-label frames in the dataset.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Output of parse_video() or parse_multiple_videos().
+
+    Returns
+    -------
+    dict
+        Dictionary with multi-label statistics.
+    """
+    frame_counts = df.groupby(['video', 'frame']).size()
+    n_frames = len(frame_counts)
+    multi = (frame_counts > 1).sum()
+
+    return {
+        'total_frames': n_frames,
+        'single_label_frames': int((frame_counts == 1).sum()),
+        'multi_label_frames': int(multi),
+        'multi_label_pct': round(multi / n_frames * 100, 1) if n_frames else 0,
+        'max_triplets_per_frame': int(frame_counts.max()) if n_frames else 0,
+        'mean_triplets_per_frame': round(frame_counts.mean(), 2) if n_frames else 0,
+        'distribution': frame_counts.value_counts().sort_index().to_dict(),
+    }
+
+
+# ---------------------------------------------------------------------------
+# CSV Export
+# ---------------------------------------------------------------------------
+
+def save_parsed_csv(df: pd.DataFrame, output_dir: str | Path,
+                    per_video: bool = True) -> list[Path]:
+    """Save parsed triplet DataFrame(s) to CSV.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Output of parse_video() or parse_multiple_videos().
+    output_dir : str or Path
+        Directory to write CSV files to.
+    per_video : bool
+        If True, save one CSV per video. If False, save a single combined CSV.
+
+    Returns
+    -------
+    list of Path
+        Paths to the saved CSV files.
+    """
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    saved = []
+    if per_video:
+        for video, vdf in df.groupby('video'):
+            fname = output_dir / f'{video}_triplets.csv'
+            vdf.to_csv(fname, index=False)
+            print(f'  Saved {fname.name} ({len(vdf)} rows)')
+            saved.append(fname)
+    else:
+        fname = output_dir / 'all_triplets.csv'
+        df.to_csv(fname, index=False)
+        print(f'  Saved {fname.name} ({len(df)} rows)')
+        saved.append(fname)
+
+    return saved
+
+
+# ---------------------------------------------------------------------------
 # CLI Entry Point (optional quick test)
 # ---------------------------------------------------------------------------
 
@@ -259,8 +366,18 @@ if __name__ == '__main__':
 
     path = sys.argv[1]
     df = parse_video(path)
+    df_valid = filter_valid_triplets(df)
+
     print(f'\nParsed {path}:')
-    print(f'  Total rows: {len(df)}')
-    print(f'  Frames: {df["frame"].nunique()}')
-    print(f'\nFirst 10 rows:')
-    print(df.head(10).to_string(index=False))
+    print(f'  Total rows (raw):   {len(df)}')
+    print(f'  Valid rows:         {len(df_valid)}')
+    print(f'  Frames:             {df_valid["frame"].nunique()}')
+
+    stats = multi_label_analysis(df_valid)
+    print(f'\n  Multi-label frames: {stats["multi_label_frames"]} '
+          f'({stats["multi_label_pct"]}%)')
+    print(f'  Max per frame:      {stats["max_triplets_per_frame"]}')
+    print(f'  Distribution:       {stats["distribution"]}')
+
+    print(f'\nFirst 10 valid rows:')
+    print(df_valid.head(10).to_string(index=False))
