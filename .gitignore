@@ -15,7 +15,6 @@ data/CholecT45/data/
 
 # Outputs
 outputs/graphs/*
-outputs/parsed_triplets/*
 
 # Jupyter Notebook
 .ipynb_checkpoints/
