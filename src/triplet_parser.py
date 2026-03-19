@@ -156,7 +156,13 @@ def parse_video(json_path: str | Path) -> pd.DataFrame:
 
     categories = data['categories']
     annotations = data['annotations']
-    video_name = data.get('video', Path(json_path).stem)
+    fps = data.get('fps', 1)
+    # Normalise video name to VIDxx format
+    raw_name = data.get('video', Path(json_path).stem)
+    if isinstance(raw_name, int):
+        video_name = f'VID{raw_name:02d}'
+    else:
+        video_name = str(raw_name)
 
     rows = []
     for frame_id, entries in annotations.items():
@@ -172,11 +178,14 @@ def parse_video(json_path: str | Path) -> pd.DataFrame:
     # Stable sort: preserves annotation order within each frame
     df = df.sort_values(['frame', 'entry_index']).reset_index(drop=True)
 
+    # Add timestamp (seconds) based on FPS
+    df['timestamp_sec'] = df['frame'] / fps if fps > 0 else df['frame']
+
     # Mark multi-label frames
     df['is_multi_label'] = df['num_triplets_in_frame'] > 1
 
     col_order = [
-        'video', 'frame', 'entry_index',
+        'video', 'frame', 'timestamp_sec', 'entry_index',
         'num_triplets_in_frame', 'is_multi_label',
         'triplet_id', 'triplet_label',
         'instrument_id', 'instrument',
