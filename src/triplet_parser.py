@@ -113,6 +113,12 @@ def decode_annotation_entry(entry: list, categories: dict) -> dict:
     # Flag null_verb / null_target entries
     is_null = (verb_id == 9) or (target_id == 14)  # null_verb=9, null_target=14
 
+    # Phase annotation (element 14)
+    phase_id = entry[14] if len(entry) > 14 else -1
+    phase = categories.get('phase', {}).get(
+        str(phase_id), f'unknown_phase_{phase_id}'
+    )
+
     return {
         'triplet_id': triplet_id,
         'triplet_label': triplet_label,
@@ -122,6 +128,8 @@ def decode_annotation_entry(entry: list, categories: dict) -> dict:
         'verb': verb,
         'target_id': target_id,
         'target': target,
+        'phase_id': phase_id,
+        'phase': phase,
         'is_valid': is_valid,
         'is_null': is_null,
     }
@@ -191,6 +199,7 @@ def parse_video(json_path: str | Path) -> pd.DataFrame:
         'instrument_id', 'instrument',
         'verb_id', 'verb',
         'target_id', 'target',
+        'phase_id', 'phase',
         'is_valid', 'is_null',
     ]
     return df[col_order]
