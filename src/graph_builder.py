@@ -56,6 +56,23 @@ def build_graph(df: pd.DataFrame, video_name: str | None = None) -> nx.MultiDiGr
         mask = mask & ~df['is_null']
     df_clean = df[mask].copy()
 
+    # Helper to calculate average burst duration
+    def compute_avg_burst(frames: list[int]) -> float:
+        if not frames: return 0.0
+        frames = sorted(frames)
+        bursts = []
+        current_burst = 1
+        for i in range(1, len(frames)):
+            # CholecT50 annotations might not be strictly +1 per frame if sample rate differs,
+            # but assuming 1 fps parsed frames, +1 is consecutive.
+            if frames[i] == frames[i-1] + 1:
+                current_burst += 1
+            else:
+                bursts.append(current_burst)
+                current_burst = 1
+        bursts.append(current_burst)
+        return sum(bursts) / len(bursts)
+
     # --- Aggregate edges ---
     # Each unique (instrument, verb, target) becomes one edge
     edge_agg = (
@@ -68,6 +85,7 @@ def build_graph(df: pd.DataFrame, video_name: str | None = None) -> nx.MultiDiGr
         )
         .reset_index()
     )
+    edge_agg['avg_burst_duration'] = edge_agg['frame_list'].apply(compute_avg_burst)
 
     # Add timestamp columns if available
     if 'timestamp_sec' in df_clean.columns:
@@ -114,6 +132,7 @@ def build_graph(df: pd.DataFrame, video_name: str | None = None) -> nx.MultiDiGr
             'first_frame': int(row['first_frame']),
             'last_frame': int(row['last_frame']),
             'duration_frames': int(row['duration_frames']),
+            'avg_burst_duration': float(row['avg_burst_duration']),
         }
         if 'timestamp_start' in row:
             attrs['timestamp_start'] = float(row['timestamp_start'])
