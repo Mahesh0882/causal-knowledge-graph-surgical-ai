@@ -293,6 +293,138 @@ def load_graph(gexf_path: str | Path) -> nx.MultiDiGraph:
 
 
 # ---------------------------------------------------------------------------
+# Visualization
+# ---------------------------------------------------------------------------
+
+def visualize_graph(
+    G: nx.MultiDiGraph,
+    output_path: str | Path | None = None,
+    figsize: tuple = (16, 10),
+    title: str | None = None,
+) -> None:
+    """Visualize the surgical action graph using matplotlib.
+
+    Instruments and targets are color-coded and placed in a bipartite
+    layout. Edge width is proportional to frequency, and verb labels
+    are displayed on the edges.
+
+    Parameters
+    ----------
+    G : nx.MultiDiGraph
+        Graph built by build_graph().
+    output_path : str or Path, optional
+        If provided, saves the plot to this path.
+    figsize : tuple
+        Figure size (width, height).
+    title : str, optional
+        Plot title. If None, uses the video name from graph metadata.
+    """
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as mpatches
+
+    instruments = [n for n, d in G.nodes(data=True) if d.get('node_type') == 'instrument']
+    targets = [n for n, d in G.nodes(data=True) if d.get('node_type') == 'target']
+
+    # Bipartite layout: instruments on the left, targets on the right
+    pos = {}
+    for i, node in enumerate(sorted(instruments)):
+        pos[node] = (-1, -i * 1.2)
+    for i, node in enumerate(sorted(targets)):
+        pos[node] = (1, -i * 0.8)
+
+    # Node colors and sizes
+    node_colors = []
+    node_sizes = []
+    for node in G.nodes():
+        if node in instruments:
+            node_colors.append('#2196F3')  # blue
+            node_sizes.append(2000)
+        else:
+            node_colors.append('#4CAF50')  # green
+            node_sizes.append(1800)
+
+    # Edge widths proportional to log-frequency
+    import math
+    edge_data = []
+    for u, v, k, d in G.edges(data=True, keys=True):
+        freq = d.get('frequency', 1)
+        edge_data.append((u, v, k, freq))
+
+    max_freq = max(e[3] for e in edge_data) if edge_data else 1
+
+    fig, ax = plt.subplots(1, 1, figsize=figsize)
+
+    # Draw nodes
+    nx.draw_networkx_nodes(
+        G, pos, ax=ax,
+        node_color=node_colors,
+        node_size=node_sizes,
+        edgecolors='white',
+        linewidths=2,
+        alpha=0.9,
+    )
+    nx.draw_networkx_labels(
+        G, pos, ax=ax,
+        font_size=10,
+        font_weight='bold',
+        font_color='white',
+    )
+
+    # Draw edges with varying width
+    for u, v, verb, freq in edge_data:
+        width = 1 + 4 * (freq / max_freq)
+        alpha = 0.4 + 0.5 * (freq / max_freq)
+        nx.draw_networkx_edges(
+            G, pos, ax=ax,
+            edgelist=[(u, v)],
+            width=width,
+            alpha=alpha,
+            edge_color='#455A64',
+            arrows=True,
+            arrowsize=15,
+            connectionstyle='arc3,rad=0.1',
+        )
+        # Edge label (verb + frequency)
+        mid_x = (pos[u][0] + pos[v][0]) / 2
+        mid_y = (pos[u][1] + pos[v][1]) / 2
+        offset = 0.08 * (hash(verb) % 5 - 2)
+        ax.text(
+            mid_x, mid_y + offset,
+            f'{verb} ({freq})',
+            fontsize=7,
+            ha='center',
+            va='center',
+            color='#37474F',
+            alpha=0.8,
+            bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.7, edgecolor='none'),
+        )
+
+    # Legend
+    inst_patch = mpatches.Patch(color='#2196F3', label=f'Instruments ({len(instruments)})')
+    tgt_patch = mpatches.Patch(color='#4CAF50', label=f'Targets ({len(targets)})')
+    ax.legend(handles=[inst_patch, tgt_patch], loc='upper right', fontsize=11)
+
+    video_name = G.graph.get('video', 'Unknown')
+    if title is None:
+        title = f'Surgical Action Graph — {video_name}'
+    ax.set_title(title, fontsize=16, fontweight='bold', pad=20)
+    ax.axis('off')
+
+    plt.tight_layout()
+
+    if output_path:
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        plt.savefig(str(output_path), dpi=150, bbox_inches='tight',
+                    facecolor='white', edgecolor='none')
+        print(f'  Saved {output_path.name}')
+
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
 # CLI Entry Point
 # ---------------------------------------------------------------------------
 
@@ -307,3 +439,4 @@ if __name__ == '__main__':
     df = pd.read_csv(csv_path)
     G = build_graph(df)
     print_graph_stats(G)
+
