@@ -14,7 +14,7 @@ data/CholecT45/*
 data/CholecT45/data/
 
 # Outputs
-outputs/graphs/*
+outputs/graphs/*.png
 
 # Jupyter Notebook
 .ipynb_checkpoints/
