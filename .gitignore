@@ -23,3 +23,4 @@ outputs/graphs/*.png
 venv/
 *.png
 .DS_Store
+lib/

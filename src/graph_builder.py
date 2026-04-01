@@ -444,6 +444,239 @@ def visualize_graph(
 
 
 # ---------------------------------------------------------------------------
+# Interactive Visualization (pyvis)
+# ---------------------------------------------------------------------------
+
+def visualize_graph_interactive(
+    G: nx.MultiDiGraph,
+    output_path: str | Path | None = None,
+    title: str | None = None,
+    height: str = '800px',
+    width: str = '100%',
+) -> Path | None:
+    """Generate an interactive HTML graph viewable in any web browser.
+
+    Instruments and targets are color-coded with distinct shapes and
+    descriptive labels (e.g. "Instrument (grasper)", "Target (gallbladder)").
+
+    Parameters
+    ----------
+    G : nx.MultiDiGraph
+        Graph built by build_graph().
+    output_path : str or Path, optional
+        Where to save the HTML file. If None, saves to
+        outputs/graphs/interactive/<video>_interactive.html.
+    title : str, optional
+        Graph title. If None, auto-generated from graph metadata.
+    height : str
+        CSS height for the canvas (default '800px').
+    width : str
+        CSS width for the canvas (default '100%').
+
+    Returns
+    -------
+    Path or None
+        Path to saved HTML file.
+    """
+    from pyvis.network import Network
+
+    video_name = G.graph.get('video', 'Unknown')
+    if title is None:
+        title = f'Surgical Action Graph — {video_name}'
+
+    # Separate node types
+    instruments = [n for n, d in G.nodes(data=True) if d.get('node_type') == 'instrument']
+    targets = [n for n, d in G.nodes(data=True) if d.get('node_type') == 'target']
+
+    # Create pyvis network
+    net = Network(
+        height=height,
+        width=width,
+        directed=True,
+        notebook=False,
+        bgcolor='#1a1a2e',
+        font_color='white',
+    )
+
+    # Color scheme
+    INSTRUMENT_COLOR = '#2196F3'  # blue
+    TARGET_COLOR = '#4CAF50'      # green
+
+    # --- Add Instrument nodes ---
+    for node in sorted(instruments):
+        node_id = G.nodes[node].get('id', '?')
+        label = f'Instrument\n({node})'
+        tooltip = (
+            f'<b>Instrument: {node}</b><br>'
+            f'ID: {node_id}<br>'
+            f'Type: Instrument<br>'
+            f'Connections: {G.degree(node)}'
+        )
+        net.add_node(
+            node,
+            label=label,
+            title=tooltip,
+            color=INSTRUMENT_COLOR,
+            shape='dot',
+            size=35,
+            font={'size': 14, 'color': 'white', 'face': 'arial', 'strokeWidth': 2, 'strokeColor': '#000'},
+            borderWidth=3,
+            borderWidthSelected=5,
+        )
+
+    # --- Add Target nodes ---
+    for node in sorted(targets):
+        node_id = G.nodes[node].get('id', '?')
+        label = f'Target\n({node})'
+        tooltip = (
+            f'<b>Target: {node}</b><br>'
+            f'ID: {node_id}<br>'
+            f'Type: Target<br>'
+            f'Connections: {G.degree(node)}'
+        )
+        net.add_node(
+            node,
+            label=label,
+            title=tooltip,
+            color=TARGET_COLOR,
+            shape='diamond',
+            size=30,
+            font={'size': 14, 'color': 'white', 'face': 'arial', 'strokeWidth': 2, 'strokeColor': '#000'},
+            borderWidth=3,
+            borderWidthSelected=5,
+        )
+
+    # --- Add Edges ---
+    max_freq = 1
+    for u, v, k, d in G.edges(data=True, keys=True):
+        freq = d.get('frequency', 1)
+        if freq > max_freq:
+            max_freq = freq
+
+    for u, v, k, d in G.edges(data=True, keys=True):
+        verb = d.get('verb', k)
+        freq = d.get('frequency', 1)
+        first_f = d.get('first_frame', '?')
+        last_f = d.get('last_frame', '?')
+        triplet_label = d.get('triplet_label', '')
+
+        edge_width = 1 + 5 * (freq / max_freq)
+        edge_label = f'{verb} ({freq})'
+        tooltip = (
+            f'<b>{verb}</b><br>'
+            f'Frequency: {freq} frames<br>'
+            f'Triplet: {triplet_label}<br>'
+            f'Frames: {first_f} → {last_f}<br>'
+            f'Avg burst: {d.get("avg_burst_duration", 0):.1f}'
+        )
+
+        net.add_edge(
+            u, v,
+            label=edge_label,
+            title=tooltip,
+            width=edge_width,
+            color={'color': '#78909C', 'highlight': '#FF9800', 'hover': '#FF9800'},
+            arrows='to',
+            font={'size': 10, 'color': '#B0BEC5', 'strokeWidth': 0, 'align': 'top'},
+            smooth={'type': 'curvedCW', 'roundness': 0.2},
+        )
+
+    # --- Physics & interaction options ---
+    net.set_options("""
+    {
+      "physics": {
+        "forceAtlas2Based": {
+          "gravitationalConstant": -80,
+          "centralGravity": 0.008,
+          "springLength": 200,
+          "springConstant": 0.04,
+          "damping": 0.5
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+          "iterations": 150
+        }
+      },
+      "interaction": {
+        "hover": true,
+        "navigationButtons": true,
+        "keyboard": true,
+        "tooltipDelay": 100,
+        "zoomView": true
+      },
+      "edges": {
+        "smooth": {
+          "type": "curvedCW",
+          "roundness": 0.2
+        }
+      }
+    }
+    """)
+
+    # --- Determine output path ---
+    if output_path is None:
+        output_path = Path('outputs/graphs/interactive') / f'{video_name}_interactive.html'
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # --- Add legend + title via custom HTML injection ---
+    extra_html = f"""
+    <div style="
+        position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 14px 24px; text-align: center;
+        font-family: Arial, sans-serif; color: white;
+        border-bottom: 2px solid #2196F3;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    ">
+        <span style="font-size: 20px; font-weight: bold; letter-spacing: 0.5px;">
+            🔬 {title}
+        </span>
+    </div>
+    <div style="
+        position: fixed; bottom: 20px; left: 20px; z-index: 9999;
+        background: rgba(26, 26, 46, 0.92); border: 1px solid #333;
+        border-radius: 12px; padding: 16px 20px;
+        font-family: Arial, sans-serif; color: white; font-size: 13px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+    ">
+        <div style="font-weight: bold; font-size: 15px; margin-bottom: 10px;
+                    border-bottom: 1px solid #444; padding-bottom: 6px;">
+            🔬 Legend
+        </div>
+        <div style="margin-bottom: 6px;">
+            <span style="display: inline-block; width: 14px; height: 14px;
+                        background: {INSTRUMENT_COLOR}; border-radius: 50%;
+                        vertical-align: middle; margin-right: 8px;"></span>
+            <b>Instrument</b> — {len(instruments)} nodes
+        </div>
+        <div style="margin-bottom: 10px;">
+            <span style="display: inline-block; width: 14px; height: 14px;
+                        background: {TARGET_COLOR}; transform: rotate(45deg);
+                        vertical-align: middle; margin-right: 8px;"></span>
+            <b>Target</b> — {len(targets)} nodes
+        </div>
+        <div style="font-size: 11px; color: #aaa;">
+            Edges: {G.number_of_edges()} | Drag to rearrange | Scroll to zoom
+        </div>
+    </div>
+    """
+
+    # Save and inject legend
+    net.save_graph(str(output_path))
+
+    # Inject legend HTML into the saved file
+    with open(output_path, 'r') as f:
+        html_content = f.read()
+    html_content = html_content.replace('</body>', extra_html + '\n</body>')
+    with open(output_path, 'w') as f:
+        f.write(html_content)
+
+    print(f'  Saved interactive graph: {output_path}')
+    return output_path
+
+
+# ---------------------------------------------------------------------------
 # CLI Entry Point
 # ---------------------------------------------------------------------------
 
