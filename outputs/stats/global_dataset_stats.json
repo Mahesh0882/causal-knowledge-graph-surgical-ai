@@ -1,0 +1,48 @@
+{
+  "total_videos": 50,
+  "total_valid_rows": 150927,
+  "unique_triplet_classes": 100,
+  "unique_instruments": 6,
+  "unique_verbs": 10,
+  "unique_targets": 15,
+  "instruments": [
+    "bipolar",
+    "clipper",
+    "grasper",
+    "hook",
+    "irrigator",
+    "scissors"
+  ],
+  "verbs": [
+    "aspirate",
+    "clip",
+    "coagulate",
+    "cut",
+    "dissect",
+    "grasp",
+    "irrigate",
+    "null_verb",
+    "pack",
+    "retract"
+  ],
+  "targets": [
+    "abdominal_wall_cavity",
+    "adhesion",
+    "blood_vessel",
+    "cystic_artery",
+    "cystic_duct",
+    "cystic_pedicle",
+    "cystic_plate",
+    "fluid",
+    "gallbladder",
+    "gut",
+    "liver",
+    "null_target",
+    "omentum",
+    "peritoneum",
+    "specimen_bag"
+  ],
+  "multi_label_pct": 60.5,
+  "max_triplets_per_frame": 3,
+  "mean_triplets_per_frame": 1.68
+}

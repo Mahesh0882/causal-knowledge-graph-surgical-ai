@@ -13,8 +13,10 @@ data/CholecT45/*
 # Large video frame data — never push
 data/CholecT45/data/
 
-# Outputs
+# Outputs (large generated data, reproducible via scripts/week1_full_pipeline.py)
 outputs/graphs/*.png
+outputs/parsed_triplets/
+outputs/temporal_sequences/
 
 # Jupyter Notebook
 .ipynb_checkpoints/

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
-  <meta lastmodifieddate="2026-03-20">
-    <creator>NetworkX 3.2.1</creator>
+  <meta lastmodifieddate="2026-04-12">
+    <creator>NetworkX 3.4.2</creator>
   </meta>
   <graph defaultedgetype="directed" mode="static" name="">
     <attributes mode="static" class="edge">
@@ -13,9 +13,10 @@
       <attribute id="6" title="first_frame" type="long" />
       <attribute id="7" title="last_frame" type="long" />
       <attribute id="8" title="duration_frames" type="long" />
-      <attribute id="9" title="timestamp_start" type="double" />
-      <attribute id="10" title="timestamp_end" type="double" />
-      <attribute id="11" title="networkx_key" type="string" />
+      <attribute id="9" title="avg_burst_duration" type="double" />
+      <attribute id="10" title="timestamp_start" type="double" />
+      <attribute id="11" title="timestamp_end" type="double" />
+      <attribute id="12" title="networkx_key" type="string" />
     </attributes>
     <attributes mode="static" class="node">
       <attribute id="0" title="node_type" type="string" />
@@ -123,9 +124,10 @@
           <attvalue for="6" value="1000" />
           <attvalue for="7" value="1011" />
           <attvalue for="8" value="12" />
-          <attvalue for="9" value="1000.0" />
-          <attvalue for="10" value="1011.0" />
-          <attvalue for="11" value="grasp" />
+          <attvalue for="9" value="12.0" />
+          <attvalue for="10" value="1000.0" />
+          <attvalue for="11" value="1011.0" />
+          <attvalue for="12" value="grasp" />
         </attvalues>
       </edge>
       <edge source="0" target="0" id="1">
@@ -138,9 +140,10 @@
           <attvalue for="6" value="1541" />
           <attvalue for="7" value="1624" />
           <attvalue for="8" value="84" />
-          <attvalue for="9" value="1541.0" />
-          <attvalue for="10" value="1624.0" />
-          <attvalue for="11" value="grasp" />
+          <attvalue for="9" value="10.666666666666666" />
+          <attvalue for="10" value="1541.0" />
+          <attvalue for="11" value="1624.0" />
+          <attvalue for="12" value="grasp" />
         </attvalues>
       </edge>
       <edge source="0" target="0" id="2">
@@ -153,9 +156,10 @@
           <attvalue for="6" value="0" />
           <attvalue for="7" value="1540" />
           <attvalue for="8" value="1541" />
-          <attvalue for="9" value="0.0" />
-          <attvalue for="10" value="1540.0" />
-          <attvalue for="11" value="retract" />
+          <attvalue for="9" value="37.92307692307692" />
+          <attvalue for="10" value="0.0" />
+          <attvalue for="11" value="1540.0" />
+          <attvalue for="12" value="retract" />
         </attvalues>
       </edge>
       <edge source="0" target="13" id="3">
@@ -168,9 +172,10 @@
           <attvalue for="6" value="1597" />
           <attvalue for="7" value="2344" />
           <attvalue for="8" value="748" />
-          <attvalue for="9" value="1597.0" />
-          <attvalue for="10" value="2344.0" />
-          <attvalue for="11" value="grasp" />
+          <attvalue for="9" value="29.0" />
+          <attvalue for="10" value="1597.0" />
+          <attvalue for="11" value="2344.0" />
+          <attvalue for="12" value="grasp" />
         </attvalues>
       </edge>
       <edge source="0" target="4" id="4">
@@ -183,9 +188,10 @@
           <attvalue for="6" value="276" />
           <attvalue for="7" value="281" />
           <attvalue for="8" value="6" />
-          <attvalue for="9" value="276.0" />
-          <attvalue for="10" value="281.0" />
-          <attvalue for="11" value="retract" />
+          <attvalue for="9" value="6.0" />
+          <attvalue for="10" value="276.0" />
+          <attvalue for="11" value="281.0" />
+          <attvalue for="12" value="retract" />
         </attvalues>
       </edge>
       <edge source="0" target="12" id="5">
@@ -198,9 +204,10 @@
           <attvalue for="6" value="256" />
           <attvalue for="7" value="258" />
           <attvalue for="8" value="3" />
-          <attvalue for="9" value="256.0" />
-          <attvalue for="10" value="258.0" />
-          <attvalue for="11" value="retract" />
+          <attvalue for="9" value="3.0" />
+          <attvalue for="10" value="256.0" />
+          <attvalue for="11" value="258.0" />
+          <attvalue for="12" value="retract" />
         </attvalues>
       </edge>
       <edge source="0" target="8" id="6">
@@ -213,9 +220,10 @@
           <attvalue for="6" value="1510" />
           <attvalue for="7" value="1773" />
           <attvalue for="8" value="264" />
-          <attvalue for="9" value="1510.0" />
-          <attvalue for="10" value="1773.0" />
-          <attvalue for="11" value="retract" />
+          <attvalue for="9" value="80.0" />
+          <attvalue for="10" value="1510.0" />
+          <attvalue for="11" value="1773.0" />
+          <attvalue for="12" value="retract" />
         </attvalues>
       </edge>
       <edge source="0" target="10" id="7">
@@ -228,9 +236,10 @@
           <attvalue for="6" value="9" />
           <attvalue for="7" value="196" />
           <attvalue for="8" value="188" />
-          <attvalue for="9" value="9.0" />
-          <attvalue for="10" value="196.0" />
-          <attvalue for="11" value="retract" />
+          <attvalue for="9" value="41.0" />
+          <attvalue for="10" value="9.0" />
+          <attvalue for="11" value="196.0" />
+          <attvalue for="12" value="retract" />
         </attvalues>
       </edge>
       <edge source="0" target="11" id="8">
@@ -243,9 +252,10 @@
           <attvalue for="6" value="227" />
           <attvalue for="7" value="275" />
           <attvalue for="8" value="49" />
-          <attvalue for="9" value="227.0" />
-          <attvalue for="10" value="275.0" />
-          <attvalue for="11" value="retract" />
+          <attvalue for="9" value="23.0" />
+          <attvalue for="10" value="227.0" />
+          <attvalue for="11" value="275.0" />
+          <attvalue for="12" value="retract" />
         </attvalues>
       </edge>
       <edge source="2" target="8" id="9">
@@ -258,9 +268,10 @@
           <attvalue for="6" value="1396" />
           <attvalue for="7" value="1400" />
           <attvalue for="8" value="5" />
-          <attvalue for="9" value="1396.0" />
-          <attvalue for="10" value="1400.0" />
-          <attvalue for="11" value="coagulate" />
+          <attvalue for="9" value="5.0" />
+          <attvalue for="10" value="1396.0" />
+          <attvalue for="11" value="1400.0" />
+          <attvalue for="12" value="coagulate" />
         </attvalues>
       </edge>
       <edge source="2" target="3" id="10">
@@ -273,9 +284,10 @@
           <attvalue for="6" value="747" />
           <attvalue for="7" value="814" />
           <attvalue for="8" value="68" />
-          <attvalue for="9" value="747.0" />
-          <attvalue for="10" value="814.0" />
-          <attvalue for="11" value="dissect" />
+          <attvalue for="9" value="68.0" />
+          <attvalue for="10" value="747.0" />
+          <attvalue for="11" value="814.0" />
+          <attvalue for="12" value="dissect" />
         </attvalues>
       </edge>
       <edge source="2" target="2" id="11">
@@ -288,9 +300,10 @@
           <attvalue for="6" value="368" />
           <attvalue for="7" value="887" />
           <attvalue for="8" value="520" />
-          <attvalue for="9" value="368.0" />
-          <attvalue for="10" value="887.0" />
-          <attvalue for="11" value="dissect" />
+          <attvalue for="9" value="25.5" />
+          <attvalue for="10" value="368.0" />
+          <attvalue for="11" value="887.0" />
+          <attvalue for="12" value="dissect" />
         </attvalues>
       </edge>
       <edge source="2" target="1" id="12">
@@ -303,9 +316,10 @@
           <attvalue for="6" value="912" />
           <attvalue for="7" value="945" />
           <attvalue for="8" value="34" />
-          <attvalue for="9" value="912.0" />
-          <attvalue for="10" value="945.0" />
-          <attvalue for="11" value="dissect" />
+          <attvalue for="9" value="34.0" />
+          <attvalue for="10" value="912.0" />
+          <attvalue for="11" value="945.0" />
+          <attvalue for="12" value="dissect" />
         </attvalues>
       </edge>
       <edge source="2" target="0" id="13">
@@ -318,9 +332,10 @@
           <attvalue for="6" value="286" />
           <attvalue for="7" value="1541" />
           <attvalue for="8" value="1256" />
-          <attvalue for="9" value="286.0" />
-          <attvalue for="10" value="1541.0" />
-          <attvalue for="11" value="dissect" />
+          <attvalue for="9" value="41.0" />
+          <attvalue for="10" value="286.0" />
+          <attvalue for="11" value="1541.0" />
+          <attvalue for="12" value="dissect" />
         </attvalues>
       </edge>
       <edge source="2" target="10" id="14">
@@ -333,9 +348,10 @@
           <attvalue for="6" value="86" />
           <attvalue for="7" value="272" />
           <attvalue for="8" value="187" />
-          <attvalue for="9" value="86.0" />
-          <attvalue for="10" value="272.0" />
-          <attvalue for="11" value="dissect" />
+          <attvalue for="9" value="51.333333333333336" />
+          <attvalue for="10" value="86.0" />
+          <attvalue for="11" value="272.0" />
+          <attvalue for="12" value="dissect" />
         </attvalues>
       </edge>
       <edge source="4" target="3" id="15">
@@ -348,9 +364,10 @@
           <attvalue for="6" value="1217" />
           <attvalue for="7" value="1249" />
           <attvalue for="8" value="33" />
-          <attvalue for="9" value="1217.0" />
-          <attvalue for="10" value="1249.0" />
-          <attvalue for="11" value="clip" />
+          <attvalue for="9" value="33.0" />
+          <attvalue for="10" value="1217.0" />
+          <attvalue for="11" value="1249.0" />
+          <attvalue for="12" value="clip" />
         </attvalues>
       </edge>
       <edge source="4" target="2" id="16">
@@ -363,9 +380,10 @@
           <attvalue for="6" value="1021" />
           <attvalue for="7" value="1117" />
           <attvalue for="8" value="97" />
-          <attvalue for="9" value="1021.0" />
-          <attvalue for="10" value="1117.0" />
-          <attvalue for="11" value="clip" />
+          <attvalue for="9" value="17.5" />
+          <attvalue for="10" value="1021.0" />
+          <attvalue for="11" value="1117.0" />
+          <attvalue for="12" value="clip" />
         </attvalues>
       </edge>
       <edge source="3" target="3" id="17">
@@ -378,9 +396,10 @@
           <attvalue for="6" value="1261" />
           <attvalue for="7" value="1279" />
           <attvalue for="8" value="19" />
-          <attvalue for="9" value="1261.0" />
-          <attvalue for="10" value="1279.0" />
-          <attvalue for="11" value="cut" />
+          <attvalue for="9" value="19.0" />
+          <attvalue for="10" value="1261.0" />
+          <attvalue for="11" value="1279.0" />
+          <attvalue for="12" value="cut" />
         </attvalues>
       </edge>
       <edge source="3" target="2" id="18">
@@ -393,9 +412,10 @@
           <attvalue for="6" value="1280" />
           <attvalue for="7" value="1295" />
           <attvalue for="8" value="16" />
-          <attvalue for="9" value="1280.0" />
-          <attvalue for="10" value="1295.0" />
-          <attvalue for="11" value="cut" />
+          <attvalue for="9" value="16.0" />
+          <attvalue for="10" value="1280.0" />
+          <attvalue for="11" value="1295.0" />
+          <attvalue for="12" value="cut" />
         </attvalues>
       </edge>
       <edge source="5" target="6" id="19">
@@ -408,9 +428,10 @@
           <attvalue for="6" value="1669" />
           <attvalue for="7" value="2294" />
           <attvalue for="8" value="626" />
-          <attvalue for="9" value="1669.0" />
-          <attvalue for="10" value="2294.0" />
-          <attvalue for="11" value="aspirate" />
+          <attvalue for="9" value="12.714285714285714" />
+          <attvalue for="10" value="1669.0" />
+          <attvalue for="11" value="2294.0" />
+          <attvalue for="12" value="aspirate" />
         </attvalues>
       </edge>
       <edge source="5" target="7" id="20">
@@ -423,9 +444,10 @@
           <attvalue for="6" value="1691" />
           <attvalue for="7" value="1703" />
           <attvalue for="8" value="13" />
-          <attvalue for="9" value="1691.0" />
-          <attvalue for="10" value="1703.0" />
-          <attvalue for="11" value="irrigate" />
+          <attvalue for="9" value="2.3333333333333335" />
+          <attvalue for="10" value="1691.0" />
+          <attvalue for="11" value="1703.0" />
+          <attvalue for="12" value="irrigate" />
         </attvalues>
       </edge>
       <edge source="1" target="7" id="21">
@@ -438,9 +460,10 @@
           <attvalue for="6" value="1814" />
           <attvalue for="7" value="1920" />
           <attvalue for="8" value="107" />
-          <attvalue for="9" value="1814.0" />
-          <attvalue for="10" value="1920.0" />
-          <attvalue for="11" value="coagulate" />
+          <attvalue for="9" value="31.0" />
+          <attvalue for="10" value="1814.0" />
+          <attvalue for="11" value="1920.0" />
+          <attvalue for="12" value="coagulate" />
         </attvalues>
       </edge>
       <edge source="1" target="8" id="22">
@@ -453,9 +476,10 @@
           <attvalue for="6" value="1734" />
           <attvalue for="7" value="1769" />
           <attvalue for="8" value="36" />
-          <attvalue for="9" value="1734.0" />
-          <attvalue for="10" value="1769.0" />
-          <attvalue for="11" value="coagulate" />
+          <attvalue for="9" value="36.0" />
+          <attvalue for="10" value="1734.0" />
+          <attvalue for="11" value="1769.0" />
+          <attvalue for="12" value="coagulate" />
         </attvalues>
       </edge>
     </edges>
