@@ -1,0 +1,168 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #1a1a2e;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"borderWidth": 3, "borderWidthSelected": 5, "color": "#2196F3", "font": {"color": "white"}, "id": "4", "label": "Instrument\n(4)", "shape": "dot", "size": 35, "title": "\u003cb\u003eInstrument: 4\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Instrument\u003cbr\u003eConnections: 2"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#2196F3", "font": {"color": "white"}, "id": "5", "label": "Instrument\n(5)", "shape": "dot", "size": 35, "title": "\u003cb\u003eInstrument: 5\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Instrument\u003cbr\u003eConnections: 7"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "0", "label": "Target\n(0)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 0\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 11"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "1", "label": "Target\n(1)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 1\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 11"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "10", "label": "Target\n(10)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 10\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 7"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "13", "label": "Target\n(13)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 13\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 1"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "2", "label": "Target\n(2)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 2\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 11"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "3", "label": "Target\n(3)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 3\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 6"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "6", "label": "Target\n(6)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 6\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 1"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "7", "label": "Target\n(7)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 7\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 2"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "8", "label": "Target\n(8)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 8\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 5"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "dissect (28)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 28 frames\u003cbr\u003eTriplet: grasper,dissect,cystic_plate\u003cbr\u003eFrames: 897 \u2192 924\u003cbr\u003eAvg burst: 28.0", "to": "1", "width": 1.115702479338843}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "grasp (8)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003egrasp\u003c/b\u003e\u003cbr\u003eFrequency: 8 frames\u003cbr\u003eTriplet: grasper,grasp,cystic_duct\u003cbr\u003eFrames: 1045 \u2192 1052\u003cbr\u003eAvg burst: 8.0", "to": "2", "width": 1.0330578512396693}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "grasp (86)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003egrasp\u003c/b\u003e\u003cbr\u003eFrequency: 86 frames\u003cbr\u003eTriplet: grasper,grasp,specimen_bag\u003cbr\u003eFrames: 1821 \u2192 1911\u003cbr\u003eAvg burst: 43.0", "to": "13", "width": 1.3553719008264462}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "pack (9)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003epack\u003c/b\u003e\u003cbr\u003eFrequency: 9 frames\u003cbr\u003eTriplet: grasper,pack,gallbladder\u003cbr\u003eFrames: 1847 \u2192 1855\u003cbr\u003eAvg burst: 9.0", "to": "0", "width": 1.037190082644628}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "retract (1210)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eretract\u003c/b\u003e\u003cbr\u003eFrequency: 1210 frames\u003cbr\u003eTriplet: grasper,retract,gallbladder\u003cbr\u003eFrames: 0 \u2192 1315\u003cbr\u003eAvg burst: 86.4", "to": "0", "width": 6.0}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "retract (452)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eretract\u003c/b\u003e\u003cbr\u003eFrequency: 452 frames\u003cbr\u003eTriplet: grasper,retract,liver\u003cbr\u003eFrames: 504 \u2192 1798\u003cbr\u003eAvg burst: 64.6", "to": "8", "width": 2.8677685950413223}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "retract (138)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eretract\u003c/b\u003e\u003cbr\u003eFrequency: 138 frames\u003cbr\u003eTriplet: grasper,retract,omentum\u003cbr\u003eFrames: 5 \u2192 1984\u003cbr\u003eAvg burst: 17.2", "to": "10", "width": 1.5702479338842976}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "2", "label": "coagulate (17)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003ecoagulate\u003c/b\u003e\u003cbr\u003eFrequency: 17 frames\u003cbr\u003eTriplet: hook,coagulate,omentum\u003cbr\u003eFrames: 27 \u2192 43\u003cbr\u003eAvg burst: 17.0", "to": "10", "width": 1.0702479338842976}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "2", "label": "dissect (236)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 236 frames\u003cbr\u003eTriplet: hook,dissect,omentum\u003cbr\u003eFrames: 0 \u2192 588\u003cbr\u003eAvg burst: 26.2", "to": "10", "width": 1.9752066115702478}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "2", "label": "dissect (10)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 10 frames\u003cbr\u003eTriplet: hook,dissect,cystic_artery\u003cbr\u003eFrames: 994 \u2192 1003\u003cbr\u003eAvg burst: 10.0", "to": "3", "width": 1.0413223140495869}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "2", "label": "dissect (123)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 123 frames\u003cbr\u003eTriplet: hook,dissect,cystic_duct\u003cbr\u003eFrames: 689 \u2192 1013\u003cbr\u003eAvg burst: 41.0", "to": "2", "width": 1.5082644628099173}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "2", "label": "dissect (61)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 61 frames\u003cbr\u003eTriplet: hook,dissect,cystic_plate\u003cbr\u003eFrames: 757 \u2192 991\u003cbr\u003eAvg burst: 30.5", "to": "1", "width": 1.2520661157024793}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "2", "label": "dissect (325)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 325 frames\u003cbr\u003eTriplet: hook,dissect,gallbladder\u003cbr\u003eFrames: 406 \u2192 1340\u003cbr\u003eAvg burst: 54.2", "to": "0", "width": 2.34297520661157}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "1", "label": "coagulate (12)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003ecoagulate\u003c/b\u003e\u003cbr\u003eFrequency: 12 frames\u003cbr\u003eTriplet: bipolar,coagulate,abdominal_wall_cavity\u003cbr\u003eFrames: 2073 \u2192 2095\u003cbr\u003eAvg burst: 4.0", "to": "7", "width": 1.0495867768595042}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "1", "label": "coagulate (7)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003ecoagulate\u003c/b\u003e\u003cbr\u003eFrequency: 7 frames\u003cbr\u003eTriplet: bipolar,coagulate,cystic_plate\u003cbr\u003eFrames: 1187 \u2192 1193\u003cbr\u003eAvg burst: 7.0", "to": "1", "width": 1.0289256198347108}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "1", "label": "coagulate (240)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003ecoagulate\u003c/b\u003e\u003cbr\u003eFrequency: 240 frames\u003cbr\u003eTriplet: bipolar,coagulate,liver\u003cbr\u003eFrames: 1367 \u2192 2047\u003cbr\u003eAvg burst: 26.7", "to": "8", "width": 1.9917355371900827}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "1", "label": "retract (3)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eretract\u003c/b\u003e\u003cbr\u003eFrequency: 3 frames\u003cbr\u003eTriplet: bipolar,retract,liver\u003cbr\u003eFrames: 1754 \u2192 1756\u003cbr\u003eAvg burst: 3.0", "to": "8", "width": 1.012396694214876}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "1", "label": "coagulate (77)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003ecoagulate\u003c/b\u003e\u003cbr\u003eFrequency: 77 frames\u003cbr\u003eTriplet: bipolar,coagulate,omentum\u003cbr\u003eFrames: 55 \u2192 179\u003cbr\u003eAvg burst: 38.5", "to": "10", "width": 1.3181818181818181}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "1", "label": "retract (2)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eretract\u003c/b\u003e\u003cbr\u003eFrequency: 2 frames\u003cbr\u003eTriplet: bipolar,retract,omentum\u003cbr\u003eFrames: 1699 \u2192 1781\u003cbr\u003eAvg burst: 1.0", "to": "10", "width": 1.0082644628099173}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "1", "label": "dissect (14)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 14 frames\u003cbr\u003eTriplet: bipolar,dissect,cystic_artery\u003cbr\u003eFrames: 883 \u2192 896\u003cbr\u003eAvg burst: 14.0", "to": "3", "width": 1.0578512396694215}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "1", "label": "dissect (44)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 44 frames\u003cbr\u003eTriplet: bipolar,dissect,cystic_duct\u003cbr\u003eFrames: 839 \u2192 882\u003cbr\u003eAvg burst: 44.0", "to": "2", "width": 1.1818181818181819}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "5", "label": "aspirate (297)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003easpirate\u003c/b\u003e\u003cbr\u003eFrequency: 297 frames\u003cbr\u003eTriplet: irrigator,aspirate,fluid\u003cbr\u003eFrames: 106 \u2192 2063\u003cbr\u003eAvg burst: 14.1", "to": "6", "width": 2.2272727272727275}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "5", "label": "dissect (14)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 14 frames\u003cbr\u003eTriplet: irrigator,dissect,omentum\u003cbr\u003eFrames: 317 \u2192 330\u003cbr\u003eAvg burst: 14.0", "to": "10", "width": 1.0578512396694215}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "5", "label": "retract (79)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eretract\u003c/b\u003e\u003cbr\u003eFrequency: 79 frames\u003cbr\u003eTriplet: irrigator,retract,omentum\u003cbr\u003eFrames: 223 \u2192 1792\u003cbr\u003eAvg burst: 7.2", "to": "10", "width": 1.3264462809917354}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "5", "label": "irrigate (15)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eirrigate\u003c/b\u003e\u003cbr\u003eFrequency: 15 frames\u003cbr\u003eTriplet: irrigator,irrigate,abdominal_wall_cavity\u003cbr\u003eFrames: 1709 \u2192 1786\u003cbr\u003eAvg burst: 3.8", "to": "7", "width": 1.06198347107438}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "5", "label": "irrigate (6)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eirrigate\u003c/b\u003e\u003cbr\u003eFrequency: 6 frames\u003cbr\u003eTriplet: irrigator,irrigate,liver\u003cbr\u003eFrames: 1410 \u2192 1732\u003cbr\u003eAvg burst: 1.2", "to": "8", "width": 1.024793388429752}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "5", "label": "retract (19)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eretract\u003c/b\u003e\u003cbr\u003eFrequency: 19 frames\u003cbr\u003eTriplet: irrigator,retract,liver\u003cbr\u003eFrames: 1414 \u2192 1485\u003cbr\u003eAvg burst: 9.5", "to": "8", "width": 1.078512396694215}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "5", "label": "retract (6)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eretract\u003c/b\u003e\u003cbr\u003eFrequency: 6 frames\u003cbr\u003eTriplet: irrigator,retract,gallbladder\u003cbr\u003eFrames: 311 \u2192 316\u003cbr\u003eAvg burst: 6.0", "to": "0", "width": 1.024793388429752}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "4", "label": "clip (5)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eclip\u003c/b\u003e\u003cbr\u003eFrequency: 5 frames\u003cbr\u003eTriplet: clipper,clip,cystic_artery\u003cbr\u003eFrames: 1106 \u2192 1110\u003cbr\u003eAvg burst: 5.0", "to": "3", "width": 1.0206611570247934}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "4", "label": "clip (59)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eclip\u003c/b\u003e\u003cbr\u003eFrequency: 59 frames\u003cbr\u003eTriplet: clipper,clip,cystic_duct\u003cbr\u003eFrames: 1021 \u2192 1105\u003cbr\u003eAvg burst: 29.5", "to": "2", "width": 1.243801652892562}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "3", "label": "cut (4)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003ecut\u003c/b\u003e\u003cbr\u003eFrequency: 4 frames\u003cbr\u003eTriplet: scissors,cut,cystic_artery\u003cbr\u003eFrames: 1137 \u2192 1140\u003cbr\u003eAvg burst: 4.0", "to": "3", "width": 1.0165289256198347}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "3", "label": "cut (20)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003ecut\u003c/b\u003e\u003cbr\u003eFrequency: 20 frames\u003cbr\u003eTriplet: scissors,cut,cystic_duct\u003cbr\u003eFrames: 1117 \u2192 1136\u003cbr\u003eAvg burst: 20.0", "to": "2", "width": 1.0826446280991735}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"forceAtlas2Based": {"gravitationalConstant": -80, "centralGravity": 0.008, "springLength": 200, "springConstant": 0.04, "damping": 0.5}, "solver": "forceAtlas2Based", "stabilization": {"iterations": 150}}, "interaction": {"hover": true, "navigationButtons": true, "keyboard": true, "tooltipDelay": 100, "zoomView": true}, "edges": {"smooth": {"type": "curvedCW", "roundness": 0.2}}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    
+    <div style="
+        position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 14px 24px; text-align: center;
+        font-family: Arial, sans-serif; color: white;
+        border-bottom: 2px solid #2196F3;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    ">
+        <span style="font-size: 20px; font-weight: bold; letter-spacing: 0.5px;">
+            🔬 Surgical Action Graph — VID32
+        </span>
+    </div>
+    <div style="
+        position: fixed; bottom: 20px; left: 20px; z-index: 9999;
+        background: rgba(26, 26, 46, 0.92); border: 1px solid #333;
+        border-radius: 12px; padding: 16px 20px;
+        font-family: Arial, sans-serif; color: white; font-size: 13px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+    ">
+        <div style="font-weight: bold; font-size: 15px; margin-bottom: 10px;
+                    border-bottom: 1px solid #444; padding-bottom: 6px;">
+            🔬 Legend
+        </div>
+        <div style="margin-bottom: 6px;">
+            <span style="display: inline-block; width: 14px; height: 14px;
+                        background: #2196F3; border-radius: 50%;
+                        vertical-align: middle; margin-right: 8px;"></span>
+            <b>Instrument</b> — 2 nodes
+        </div>
+        <div style="margin-bottom: 10px;">
+            <span style="display: inline-block; width: 14px; height: 14px;
+                        background: #4CAF50; transform: rotate(45deg);
+                        vertical-align: middle; margin-right: 8px;"></span>
+            <b>Target</b> — 9 nodes
+        </div>
+        <div style="font-size: 11px; color: #aaa;">
+            Edges: 32 | Drag to rearrange | Scroll to zoom
+        </div>
+    </div>
+    
+</body>
+</html>

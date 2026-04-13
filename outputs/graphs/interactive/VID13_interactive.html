@@ -1,0 +1,168 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #1a1a2e;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"borderWidth": 3, "borderWidthSelected": 5, "color": "#2196F3", "font": {"color": "white"}, "id": "1", "label": "Instrument\n(1)", "shape": "dot", "size": 35, "title": "\u003cb\u003eInstrument: 1\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Instrument\u003cbr\u003eConnections: 1"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#2196F3", "font": {"color": "white"}, "id": "4", "label": "Instrument\n(4)", "shape": "dot", "size": 35, "title": "\u003cb\u003eInstrument: 4\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Instrument\u003cbr\u003eConnections: 2"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "0", "label": "Target\n(0)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 0\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 10"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "11", "label": "Target\n(11)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 11\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 1"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "13", "label": "Target\n(13)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 13\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 1"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "2", "label": "Target\n(2)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 2\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 8"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "3", "label": "Target\n(3)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 3\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 6"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "5", "label": "Target\n(5)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 5\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 1"}, {"borderWidth": 3, "borderWidthSelected": 5, "color": "#4CAF50", "font": {"color": "white"}, "id": "8", "label": "Target\n(8)", "shape": "diamond", "size": 30, "title": "\u003cb\u003eTarget: 8\u003c/b\u003e\u003cbr\u003eID: ?\u003cbr\u003eType: Target\u003cbr\u003eConnections: 2"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "grasp (619)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003egrasp\u003c/b\u003e\u003cbr\u003eFrequency: 619 frames\u003cbr\u003eTriplet: grasper,grasp,gallbladder\u003cbr\u003eFrames: 0 \u2192 864\u003cbr\u003eAvg burst: 29.5", "to": "0", "width": 6.0}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "pack (24)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003epack\u003c/b\u003e\u003cbr\u003eFrequency: 24 frames\u003cbr\u003eTriplet: grasper,pack,gallbladder\u003cbr\u003eFrames: 865 \u2192 888\u003cbr\u003eAvg burst: 24.0", "to": "0", "width": 1.1938610662358644}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "retract (173)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eretract\u003c/b\u003e\u003cbr\u003eFrequency: 173 frames\u003cbr\u003eTriplet: grasper,retract,gallbladder\u003cbr\u003eFrames: 3 \u2192 655\u003cbr\u003eAvg burst: 17.3", "to": "0", "width": 2.3974151857835215}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "grasp (91)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003egrasp\u003c/b\u003e\u003cbr\u003eFrequency: 91 frames\u003cbr\u003eTriplet: grasper,grasp,specimen_bag\u003cbr\u003eFrames: 850 \u2192 975\u003cbr\u003eAvg burst: 10.1", "to": "13", "width": 1.7350565428109856}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "0", "label": "retract (173)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eretract\u003c/b\u003e\u003cbr\u003eFrequency: 173 frames\u003cbr\u003eTriplet: grasper,retract,liver\u003cbr\u003eFrames: 661 \u2192 918\u003cbr\u003eAvg burst: 24.7", "to": "8", "width": 2.3974151857835215}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "2", "label": "coagulate (11)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003ecoagulate\u003c/b\u003e\u003cbr\u003eFrequency: 11 frames\u003cbr\u003eTriplet: hook,coagulate,blood_vessel\u003cbr\u003eFrames: 811 \u2192 821\u003cbr\u003eAvg burst: 11.0", "to": "5", "width": 1.0888529886914378}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "2", "label": "dissect (93)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 93 frames\u003cbr\u003eTriplet: hook,dissect,cystic_artery\u003cbr\u003eFrames: 154 \u2192 246\u003cbr\u003eAvg burst: 93.0", "to": "3", "width": 1.751211631663974}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "2", "label": "dissect (85)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 85 frames\u003cbr\u003eTriplet: hook,dissect,cystic_duct\u003cbr\u003eFrames: 51 \u2192 153\u003cbr\u003eAvg burst: 42.5", "to": "2", "width": 1.6865912762520194}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "2", "label": "dissect (450)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 450 frames\u003cbr\u003eTriplet: hook,dissect,gallbladder\u003cbr\u003eFrames: 247 \u2192 808\u003cbr\u003eAvg burst: 75.0", "to": "0", "width": 4.634894991922455}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "2", "label": "dissect (51)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 51 frames\u003cbr\u003eTriplet: hook,dissect,peritoneum\u003cbr\u003eFrames: 0 \u2192 50\u003cbr\u003eAvg burst: 51.0", "to": "11", "width": 1.4119547657512115}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "4", "label": "clip (13)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eclip\u003c/b\u003e\u003cbr\u003eFrequency: 13 frames\u003cbr\u003eTriplet: clipper,clip,cystic_artery\u003cbr\u003eFrames: 396 \u2192 408\u003cbr\u003eAvg burst: 13.0", "to": "3", "width": 1.1050080775444264}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "4", "label": "clip (24)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003eclip\u003c/b\u003e\u003cbr\u003eFrequency: 24 frames\u003cbr\u003eTriplet: clipper,clip,cystic_duct\u003cbr\u003eFrames: 372 \u2192 395\u003cbr\u003eAvg burst: 24.0", "to": "2", "width": 1.1938610662358644}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "3", "label": "cut (8)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003ecut\u003c/b\u003e\u003cbr\u003eFrequency: 8 frames\u003cbr\u003eTriplet: scissors,cut,cystic_artery\u003cbr\u003eFrames: 436 \u2192 443\u003cbr\u003eAvg burst: 8.0", "to": "3", "width": 1.0646203554119547}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "3", "label": "cut (20)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003ecut\u003c/b\u003e\u003cbr\u003eFrequency: 20 frames\u003cbr\u003eTriplet: scissors,cut,cystic_duct\u003cbr\u003eFrames: 416 \u2192 435\u003cbr\u003eAvg burst: 20.0", "to": "2", "width": 1.1615508885298869}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "3", "label": "dissect (7)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003edissect\u003c/b\u003e\u003cbr\u003eFrequency: 7 frames\u003cbr\u003eTriplet: scissors,dissect,gallbladder\u003cbr\u003eFrames: 444 \u2192 450\u003cbr\u003eAvg burst: 7.0", "to": "0", "width": 1.0565428109854604}, {"arrows": "to", "color": {"color": "#78909C", "highlight": "#FF9800", "hover": "#FF9800"}, "font": {"align": "top", "color": "#B0BEC5", "size": 10, "strokeWidth": 0}, "from": "1", "label": "coagulate (14)", "smooth": {"roundness": 0.2, "type": "curvedCW"}, "title": "\u003cb\u003ecoagulate\u003c/b\u003e\u003cbr\u003eFrequency: 14 frames\u003cbr\u003eTriplet: bipolar,coagulate,liver\u003cbr\u003eFrames: 905 \u2192 918\u003cbr\u003eAvg burst: 14.0", "to": "8", "width": 1.1130856219709209}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"forceAtlas2Based": {"gravitationalConstant": -80, "centralGravity": 0.008, "springLength": 200, "springConstant": 0.04, "damping": 0.5}, "solver": "forceAtlas2Based", "stabilization": {"iterations": 150}}, "interaction": {"hover": true, "navigationButtons": true, "keyboard": true, "tooltipDelay": 100, "zoomView": true}, "edges": {"smooth": {"type": "curvedCW", "roundness": 0.2}}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    
+    <div style="
+        position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 14px 24px; text-align: center;
+        font-family: Arial, sans-serif; color: white;
+        border-bottom: 2px solid #2196F3;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    ">
+        <span style="font-size: 20px; font-weight: bold; letter-spacing: 0.5px;">
+            🔬 Surgical Action Graph — VID13
+        </span>
+    </div>
+    <div style="
+        position: fixed; bottom: 20px; left: 20px; z-index: 9999;
+        background: rgba(26, 26, 46, 0.92); border: 1px solid #333;
+        border-radius: 12px; padding: 16px 20px;
+        font-family: Arial, sans-serif; color: white; font-size: 13px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+    ">
+        <div style="font-weight: bold; font-size: 15px; margin-bottom: 10px;
+                    border-bottom: 1px solid #444; padding-bottom: 6px;">
+            🔬 Legend
+        </div>
+        <div style="margin-bottom: 6px;">
+            <span style="display: inline-block; width: 14px; height: 14px;
+                        background: #2196F3; border-radius: 50%;
+                        vertical-align: middle; margin-right: 8px;"></span>
+            <b>Instrument</b> — 2 nodes
+        </div>
+        <div style="margin-bottom: 10px;">
+            <span style="display: inline-block; width: 14px; height: 14px;
+                        background: #4CAF50; transform: rotate(45deg);
+                        vertical-align: middle; margin-right: 8px;"></span>
+            <b>Target</b> — 7 nodes
+        </div>
+        <div style="font-size: 11px; color: #aaa;">
+            Edges: 16 | Drag to rearrange | Scroll to zoom
+        </div>
+    </div>
+    
+</body>
+</html>
