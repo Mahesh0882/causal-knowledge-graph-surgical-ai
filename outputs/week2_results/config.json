@@ -1,0 +1,10 @@
+{
+  "window_size": 10,
+  "batch_size": 64,
+  "epochs": 30,
+  "device": "mps",
+  "num_classes": 100,
+  "train_samples": 64583,
+  "val_samples": 1154,
+  "test_samples": 1325
+}

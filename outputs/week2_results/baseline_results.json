@@ -1,0 +1,68 @@
+{
+  "markov_val": {
+    "top1_acc": 0.9506,
+    "top5_acc": 0.9792,
+    "exact_match": 0.2868,
+    "f1_samples": 0.2978,
+    "f1_macro": 0.1091,
+    "f1_micro": 0.3054,
+    "precision": 0.9831,
+    "recall": 0.1808,
+    "mAP": 0.8032
+  },
+  "markov_test": {
+    "top1_acc": 0.9562,
+    "top5_acc": 0.9864,
+    "exact_match": 0.3109,
+    "f1_samples": 0.3296,
+    "f1_macro": 0.0603,
+    "f1_micro": 0.34,
+    "precision": 0.9698,
+    "recall": 0.2062,
+    "mAP": 0.8077
+  },
+  "lstm_val": {
+    "top1_acc": 0.9523,
+    "top5_acc": 0.9766,
+    "exact_match": 0.7972,
+    "f1_samples": 0.9066,
+    "f1_macro": 0.3062,
+    "f1_micro": 0.9242,
+    "precision": 0.9641,
+    "recall": 0.8874,
+    "mAP": 0.6812
+  },
+  "lstm_test": {
+    "top1_acc": 0.9532,
+    "top5_acc": 0.9849,
+    "exact_match": 0.8151,
+    "f1_samples": 0.9094,
+    "f1_macro": 0.2641,
+    "f1_micro": 0.9265,
+    "precision": 0.9615,
+    "recall": 0.8939,
+    "mAP": 0.6188
+  },
+  "transformer_val": {
+    "top1_acc": 0.9593,
+    "top5_acc": 0.9792,
+    "exact_match": 0.8163,
+    "f1_samples": 0.915,
+    "f1_macro": 0.3481,
+    "f1_micro": 0.9319,
+    "precision": 0.9683,
+    "recall": 0.8982,
+    "mAP": 0.7363
+  },
+  "transformer_test": {
+    "top1_acc": 0.9532,
+    "top5_acc": 0.9864,
+    "exact_match": 0.8408,
+    "f1_samples": 0.9198,
+    "f1_macro": 0.3124,
+    "f1_micro": 0.9364,
+    "precision": 0.9622,
+    "recall": 0.9118,
+    "mAP": 0.7248
+  }
+}
